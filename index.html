@@ -170,18 +170,7 @@ header{
 .hero-url{font-size:12px;color:rgba(255,255,255,.2);}
 
 /* Axes verticales */
-.hero-axes{display:flex;flex-direction:column;gap:8px;flex-shrink:0;min-width:210px;position:relative;z-index:1;}
-.haxe{
-  background:rgba(255,255,255,.04);
-  border:1px solid rgba(255,255,255,.07);
-  border-radius:12px;padding:14px 18px;
-  transition:background .2s;
-}
-.haxe:hover{background:rgba(255,255,255,.07);}
-.haxe-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--ink3);margin-bottom:6px;}
-.haxe-val{font-family:'Syne',sans-serif;font-weight:800;font-size:26px;letter-spacing:-1px;color:#fff;}
-.haxe-bar{height:3px;background:rgba(255,255,255,.08);border-radius:2px;margin-top:6px;overflow:hidden;}
-.haxe-fill{height:100%;border-radius:2px;transition:width 1.2s cubic-bezier(.16,1,.3,1);}
+
 
 /* BODY */
 .res-body{padding:40px 60px 0;background:var(--bg);}
@@ -247,12 +236,20 @@ header{
 .rap-opp-text{font-size:13px;color:var(--ink2);line-height:1.65;}
 
 /* Conclusion */
+.rap-insight{
+  background:rgba(255,107,53,.06);border:1px solid rgba(255,107,53,.15);
+  border-radius:16px;padding:18px 22px;
+}
+.rap-insight-label{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--orange);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.rap-insight-text{font-size:14px;color:var(--ink2);line-height:1.6;font-weight:500;}
+
 .rap-conclu{
   background:linear-gradient(135deg,rgba(59,123,255,.12) 0%,rgba(155,107,255,.12) 100%);
   border:1px solid rgba(59,123,255,.2);
   border-radius:16px;padding:22px 24px;
   display:flex;align-items:center;gap:18px;
   position:relative;overflow:hidden;
+  flex:1;
 }
 .rap-conclu::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 100% 50%,rgba(155,107,255,.1) 0%,transparent 60%);pointer-events:none;}
 .rap-conclu-icon{font-size:32px;flex-shrink:0;position:relative;z-index:1;}
@@ -355,7 +352,7 @@ header{
         Analyser
       </button>
     </div>
-    <div class="url-hint">Exemples : lydia.com · doctolib.fr · revolut.com · backmarket.fr</div>
+    
   </div>
 
   <div class="pills">
@@ -432,23 +429,7 @@ header{
       <div class="hero-url" id="r-url"></div>
     </div>
 
-    <div class="hero-axes">
-      <div class="haxe">
-        <div class="haxe-label">📱 Présence digitale</div>
-        <div class="haxe-val" id="ax1">—</div>
-        <div class="haxe-bar"><div class="haxe-fill" id="axb1" style="width:0%;background:linear-gradient(90deg,var(--blue),var(--purple))"></div></div>
-      </div>
-      <div class="haxe">
-        <div class="haxe-label">🎓 Stratégie campus</div>
-        <div class="haxe-val" id="ax2">—</div>
-        <div class="haxe-bar"><div class="haxe-fill" id="axb2" style="width:0%;background:linear-gradient(90deg,var(--green2),var(--green))"></div></div>
-      </div>
-      <div class="haxe">
-        <div class="haxe-label">🧠 Positionnement</div>
-        <div class="haxe-val" id="ax3">—</div>
-        <div class="haxe-bar"><div class="haxe-fill" id="axb3" style="width:0%;background:linear-gradient(90deg,var(--amber),var(--orange))"></div></div>
-      </div>
-    </div>
+
   </div>
 
   <!-- STATS BAR -->
@@ -497,9 +478,15 @@ header{
         <div class="rap-bench-label2">🎓 Opportunité campus avec Ambassia</div>
         <div class="rap-opp-text" id="r-opp"></div>
       </div>
-      <div class="rap-conclu">
-        <div class="rap-conclu-icon">💡</div>
-        <div class="rap-conclu-text" id="r-conclu"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="rap-insight">
+          <div class="rap-insight-label">⚡ Insight stratégique</div>
+          <div class="rap-insight-text" id="r-insight"></div>
+        </div>
+        <div class="rap-conclu">
+          <div class="rap-conclu-icon">💡</div>
+          <div class="rap-conclu-text" id="r-conclu"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -554,7 +541,8 @@ function startAudit() {
 }
 
 function callAPI() {
-  var sys = 'Tu es un expert marketing Gen Z et strategie campus France. Tu analyses une marque specifique et produis un audit CONCRET et SECTORIEL. Tu connais les marques francaises, leurs concurrents, leurs forces et faiblesses reelles. Retourne UNIQUEMENT un objet JSON valide, sans backticks ni texte autour. Format exact : {"marque":"Nom exact detecte","secteur":"secteur identifie","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Verdict specifique 4-5 mots","verdict_sub":"Une phrase concrete sur la situation reelle de cette marque face a la Gen Z.","points_forts":["Point factuel specifique a cette marque avec detail concret","Point 2 specifique","Point 3 specifique"],"angles_morts":["Angle mort specifique avec impact chiffre si possible","Angle mort 2","Angle mort 3"],"benchmark":"Une phrase sur ce que font les concurrents directs de cette marque en matiere de Gen Z et campus.","actions":["Action concrete et specifique a cette marque avec canal et cible precise","Action 2 concrete","Action 3 concrete avec mention explicite du levier ambassadeurs campus si pertinent"],"opportunite":"2-3 phrases sur l opportunite campus specifique pour ce secteur et cette marque en France. Mentionner pourquoi Ambassia peut aider concretement.","conclusion":"1 phrase impactante et specifique a cette marque."}. IMPORTANT : chaque item doit etre specifique a la marque analysee, pas generique. Scores de 0 a 100. Max 15 mots par item.';
+  var sys = 'Tu es un analyste strategique senior specialise en marketing Gen Z et strategie campus pour les marques en France. Tu produis des audits ultra-precis, factuals et actionables. Retourne UNIQUEMENT un objet JSON valide, sans backticks. Format : {"marque":"Nom exact","secteur":"secteur precis","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Verdict incisif 4-5 mots","verdict_sub":"Une phrase qui decrit precisement la situation de cette marque face a la Gen Z avec un element factuel.","points_forts":["Point fort 1 avec exemple concret et chiffre si possible (max 18 mots)","Point fort 2 specifique avec detail produit ou canal","Point fort 3 specifique"],"angles_morts":["Angle mort critique avec impact business chiffre ou compare a un concurrent (max 18 mots)","Angle mort 2 avec consequence concrete","Angle mort 3 specifique"],"benchmark":"2 phrases : cite 2-3 concurrents directs et ce qu ils font specifiquement en Gen Z et campus. Sois factuel et precis.","actions":["Action 1 tres concrete : canal specifique + cible precise + objectif mesurable (max 20 mots)","Action 2 tres concrete avec KPI attendu","Action 3 : levier ambassadeurs campus Ambassia avec detail operationnel"],"opportunite":"3 phrases detaillees : marche addressable en chiffres, gap concurrentiel identifie, comment Ambassia peut activer ce canal en moins de 4 semaines.","conclusion":"1 phrase puissante et specifique qui resume le diagnostic et cree un sentiment d urgence.","insight_cle":"1 insight strategique inattendu et specifique sur cette marque que la plupart des gens ne voient pas (max 20 mots)."}. Scores de 0 a 100. Sois SPECIFIQUE, FACTUEL, INCISIF.';"
+
 
   var usr = 'Analyse approfondie de la marque dont le site est : ' + siteUrl + '\n\nContexte de reference :\n- 12M consommateurs Gen Z en France (18-25 ans)\n- 72% utilisent un adblocker -> le digital pur ne suffit plus\n- 3M etudiants dans l enseignement superieur francais\n- ZERO startup du Top 40 French Tech avec programme campus ambassadeurs documente\n- Red Bull, Spotify, Adidas ont construit leur domination Gen Z via les campus (ambassadeurs terrain)\n- Ambassia est une agence qui deploie des etudiants-ambassadeurs sur les campus francais pour les marques\n\nPour ton analyse :\n1. Identifie les concurrents directs de cette marque et compare leur strategie Gen Z\n2. Sois SPECIFIQUE : cite des exemples reels de ce que fait ou ne fait pas cette marque\n3. Les recommandations doivent etre actionnables et adaptees au secteur\n4. Pour les angles morts lies au campus/terrain, mentionne naturellement qu une agence comme Ambassia peut combler ce gap\n\nRetourne uniquement le JSON avec le champ benchmark en plus.';
 
@@ -624,27 +612,18 @@ function showResult(d) {
   var a2 = clamp(parseInt(d.score_campus)||0);
   var a3 = clamp(parseInt(d.score_positionnement)||0);
 
-  document.getElementById('ax1').textContent = a1 + '/100';
-  document.getElementById('ax2').textContent = a2 + '/100';
-  document.getElementById('ax3').textContent = a3 + '/100';
-
-  // Stats bar
+  // Stats bar uniquement
   document.getElementById('st1').textContent = a1 + '/100';
   document.getElementById('st2').textContent = a2 + '/100';
   document.getElementById('st3').textContent = a3 + '/100';
   document.getElementById('st4').textContent = target + '/100';
-
-  setTimeout(function() {
-    document.getElementById('axb1').style.width = a1 + '%';
-    document.getElementById('axb2').style.width = a2 + '%';
-    document.getElementById('axb3').style.width = a3 + '%';
-  }, 300);
 
   document.getElementById('r-forts').innerHTML = buildItems(d.points_forts, 'green');
   document.getElementById('r-morts').innerHTML = buildItems(d.angles_morts, 'amber');
   document.getElementById('r-actions').innerHTML = buildItems(d.actions, 'blue', true);
   document.getElementById('r-bench').textContent = d.benchmark || '';
   document.getElementById('r-opp').textContent = d.opportunite || '';
+  document.getElementById('r-insight').textContent = d.insight_cle || '';
   document.getElementById('r-conclu').textContent = d.conclusion || '';
 }
 
