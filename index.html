@@ -285,16 +285,13 @@ header{
   </h1>
 
   <p class="intro-sub">
-    Collez l'URL de votre site.<br>
-    Claude l'analyse et génère votre audit complet instantanément.
+    Ambassia l'analyse et génère votre audit complet instantanément.
   </p>
 
   <div class="url-bar">
     <div class="url-field">
-      <span class="url-icon">🌐</span>
       <input class="url-input" type="text" id="url-input"
-        placeholder="monsite.fr ou https://monsite.fr"
-        oninput="cleanUrl(this)"
+        placeholder="https://monsite.fr"
         onkeydown="if(event.key==='Enter')startAudit()">
       <button class="url-submit" onclick="startAudit()">
         <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -394,14 +391,13 @@ let rapportRaw = '';
 let siteUrl = '';
 
 function cleanUrl(input) {
-  let v = input.value.trim();
-  v = v.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
-  input.value = v;
+  // pas de nettoyage automatique - on laisse l'utilisateur taper librement
 }
 
 function normalizeUrl(raw) {
-  let u = raw.trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '');
-  return 'https://' + u;
+  let u = raw.trim();
+  if (!u.match(/^https?:\/\//i)) u = 'https://' + u.replace(/^www\./i, '');
+  return u;
 }
 
 function showScreen(id) {
@@ -482,15 +478,19 @@ Retourne uniquement le JSON demandé.`;
       })
     });
 
-    if (!res.ok) {
-      const errData = await res.json().catch(() => ({}));
-      throw new Error(errData.error ? errData.error.message : 'Erreur serveur ' + res.status);
+    let data;
+    try {
+      data = await res.json();
+    } catch(parseErr) {
+      throw new Error('Réponse non-JSON du serveur (statut ' + res.status + ')');
     }
 
-    const data = await res.json();
-
-    if (data.error) throw new Error(data.error.message);
-    if (!data.content || !Array.isArray(data.content)) throw new Error('Réponse inattendue de l\'API.');
+    if (!res.ok || data.error) {
+      throw new Error(data.error ? data.error.message : 'Erreur serveur ' + res.status);
+    }
+    if (!data.content || !Array.isArray(data.content)) {
+      throw new Error('Réponse API invalide: ' + JSON.stringify(data).slice(0, 100));
+    }
 
     // Extraire tout le texte
     let finalText = '';
