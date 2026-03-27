@@ -314,9 +314,15 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:16p
     </div>
 
     <div class="rap-bottom">
-      <div class="rap-opp">
-        <div class="rap-opp-label">🎓 Opportunité campus</div>
-        <div class="rap-opp-text" id="r-opp"></div>
+      <div class="rap-opp" style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <div class="rap-opp-label">📊 Benchmark concurrentiel</div>
+          <div class="rap-opp-text" id="r-bench" style="font-style:italic;color:var(--ink3);"></div>
+        </div>
+        <div>
+          <div class="rap-opp-label">🎓 Opportunité campus avec Ambassia</div>
+          <div class="rap-opp-text" id="r-opp"></div>
+        </div>
       </div>
       <div class="rap-conclu">
         <div class="rap-conclu-icon">💡</div>
@@ -370,8 +376,8 @@ function startAudit() {
 }
 
 function callAPI() {
-  var sys = 'Tu es un expert marketing Gen Z. Retourne UNIQUEMENT un objet JSON valide, sans backticks ni texte autour. Format exact : {"marque":"Nom","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Titre 4 mots","verdict_sub":"Une phrase courte.","points_forts":["item 1","item 2","item 3"],"angles_morts":["item 1","item 2","item 3"],"actions":["action 1","action 2","action 3"],"opportunite":"2 phrases sur opportunite campus.","conclusion":"1 phrase impactante."}. Chaque item = max 12 mots. Scores de 0 a 100.';
-  var usr = 'Audit Gen Z pour : ' + siteUrl + '\nEvalue : (1) presence digitale Gen Z - TikTok Instagram ton codes visuels, (2) strategie campus ambassadeurs offres etudiantes, (3) positionnement messaging 18-25 ans. Contexte : 12M Gen Z France, 72% adblocker, zero programme campus documente dans le Top 40 French Tech. Retourne uniquement le JSON.';
+  var sys = 'Tu es un expert marketing Gen Z et strategie campus France. Tu analyses une marque specifique et produis un audit CONCRET et SECTORIEL. Tu connais les marques francaises, leurs concurrents, leurs forces et faiblesses reelles. Retourne UNIQUEMENT un objet JSON valide, sans backticks ni texte autour. Format exact : {"marque":"Nom exact detecte","secteur":"secteur identifie","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Verdict specifique 4-5 mots","verdict_sub":"Une phrase concrete sur la situation reelle de cette marque face a la Gen Z.","points_forts":["Point factuel specifique a cette marque, avec detail concret","Point 2 specifique","Point 3 specifique"],"angles_morts":["Angle mort specifique avec impact chiffre si possible","Angle mort 2","Angle mort 3"],"benchmark":"Une phrase sur ce que font les concurrents directs de cette marque en matiere de Gen Z et campus.","actions":["Action concrete et specifique a cette marque avec canal et cible precise","Action 2 concrete","Action 3 concrete avec mention explicite du levier ambassadeurs campus si pertinent"],"opportunite":"2-3 phrases sur l opportunite campus specifique pour ce secteur et cette marque en France. Mentionner pourquoi Ambassia peut aider concretement.","conclusion":"1 phrase impactante et specifique a cette marque."}. IMPORTANT : chaque item doit etre specifique a la marque analysee, pas generique. Scores de 0 a 100. Max 15 mots par item.';
+  var usr = 'Analyse approfondie de la marque dont le site est : ' + siteUrl + '\n\nContexte de reference :\n- 12M consommateurs Gen Z en France (18-25 ans)\n- 72% utilisent un adblocker -> le digital pur ne suffit plus\n- 3M etudiants dans l enseignement superieur francais\n- ZERO startup du Top 40 French Tech avec programme campus ambassadeurs documente\n- Red Bull, Spotify, Adidas ont construit leur domination Gen Z via les campus (ambassadeurs terrain)\n- Ambassia est une agence qui deploie des etudiants-ambassadeurs sur les campus francais pour les marques\n\nPour ton analyse :\n1. Identifie les concurrents directs de cette marque et compare leur strategie Gen Z\n2. Sois SPECIFIQUE : cite des exemples reels de ce que fait ou ne fait pas cette marque\n3. Les recommandations doivent etre actionnables et adaptees au secteur\n4. Pour les angles morts lies au campus/terrain, mentionne naturellement qu une agence comme Ambassia peut combler ce gap\n\nRetourne uniquement le JSON avec le champ benchmark en plus.';
 
   fetch('/.netlify/functions/claude', {
     method: 'POST',
@@ -444,6 +450,7 @@ function showResult(d) {
   document.getElementById('r-forts').innerHTML = buildItems(d.points_forts, 'green');
   document.getElementById('r-morts').innerHTML = buildItems(d.angles_morts, 'amber');
   document.getElementById('r-actions').innerHTML = buildItems(d.actions, 'blue', true);
+  document.getElementById('r-bench').textContent = d.benchmark || '';
   document.getElementById('r-opp').textContent = d.opportunite || '';
   document.getElementById('r-conclu').textContent = d.conclusion || '';
 }
@@ -488,6 +495,7 @@ document.getElementById('cpbtn').addEventListener('click', function() {
   if (d.points_forts) txt += 'CE QUE VOUS FAITES BIEN\n' + d.points_forts.map(function(x){return '✓ '+x;}).join('\n') + '\n\n';
   if (d.angles_morts) txt += 'ANGLES MORTS\n' + d.angles_morts.map(function(x){return '⚠ '+x;}).join('\n') + '\n\n';
   if (d.actions) txt += '3 ACTIONS PRIORITAIRES\n' + d.actions.map(function(x,i){return (i+1)+'. '+x;}).join('\n') + '\n\n';
+  if (d.benchmark) txt += 'BENCHMARK CONCURRENTIEL\n' + d.benchmark + '\n\n';
   if (d.opportunite) txt += 'OPPORTUNITE CAMPUS\n' + d.opportunite + '\n\n';
   if (d.conclusion) txt += 'CONCLUSION\n' + d.conclusion;
   navigator.clipboard.writeText(txt).then(function() {
