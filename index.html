@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ambassia — Audit Gen Z Gratuit</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#FAFBFF;
+  --white:#fff;
+  --ink:#0A0F2E;
+  --ink2:#2D3A6B;
+  --ink3:#8892B8;
+  --border:rgba(10,15,46,.08);
+  --border2:rgba(10,15,46,.14);
+  --blue:#1A6BFF;
+  --blue-l:#EEF3FF;
+  --blue-m:#C5D5FF;
+  --orange:#FF5C35;
+  --green:#00C97A;
+}
+html{font-size:15px;}
+body{background:var(--bg);color:var(--ink);font-family:'DM Sans',sans-serif;line-height:1.6;min-height:100vh;}
+
+/* HEADER */
+header{
+  background:var(--white);border-bottom:1px solid var(--border);
+  padding:16px 40px;display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+}
+.logo{font-family:'Syne',sans-serif;font-weight:800;font-size:18px;color:var(--ink);}
+.logo em{font-style:normal;color:var(--blue);}
+.hbadge{font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;background:var(--blue-l);border:1px solid var(--blue-m);border-radius:20px;padding:4px 14px;color:var(--blue);}
+
+.screen{display:none;}
+.screen.active{display:block;}
+
+/* ── INTRO ── */
+#s-intro{
+  background:var(--white);
+  min-height:calc(100vh - 57px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 24px;text-align:center;
+  position:relative;overflow:hidden;
+}
+#s-intro.active{display:flex;}
+
+/* Grille de points déco */
+#s-intro::before{
+  content:'';position:absolute;inset:0;
+  background-image:radial-gradient(circle,rgba(10,15,46,.07) 1px,transparent 1px);
+  background-size:28px 28px;
+  pointer-events:none;
+}
+
+/* Blob coloré haut droite */
+.blob1{
+  position:absolute;width:500px;height:500px;border-radius:50%;
+  background:radial-gradient(circle,rgba(26,107,255,.12) 0%,transparent 65%);
+  top:-150px;right:-150px;pointer-events:none;
+}
+/* Blob orange bas gauche */
+.blob2{
+  position:absolute;width:380px;height:380px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,92,53,.10) 0%,transparent 65%);
+  bottom:-100px;left:-80px;pointer-events:none;
+}
+/* Blob vert milieu */
+.blob3{
+  position:absolute;width:300px;height:300px;border-radius:50%;
+  background:radial-gradient(circle,rgba(0,201,122,.08) 0%,transparent 65%);
+  top:30%;left:-60px;pointer-events:none;
+}
+
+/* Éléments déco flottants */
+.deco{position:absolute;pointer-events:none;}
+.deco-plus{font-size:22px;color:var(--blue);opacity:.25;font-weight:300;}
+.deco-ring{width:40px;height:40px;border-radius:50%;border:2px solid;opacity:.15;}
+.deco-sq{width:20px;height:20px;border-radius:4px;opacity:.12;}
+
+.intro-eyebrow{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink3);margin-bottom:28px;
+}
+.eyebrow-dot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;}
+
+.intro-h1{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(36px,6vw,72px);
+  line-height:1.0;letter-spacing:-3px;
+  color:var(--ink);margin-bottom:20px;max-width:800px;
+  position:relative;z-index:1;
+}
+.intro-h1 .word-blue{color:var(--blue);}
+.intro-h1 .word-orange{color:var(--orange);}
+
+.intro-sub{
+  font-size:16px;color:var(--ink3);font-weight:300;
+  max-width:440px;margin:0 auto 48px;line-height:1.7;
+  position:relative;z-index:1;
+}
+
+/* URL BAR */
+.url-bar{
+  max-width:620px;width:100%;margin:0 auto;
+  position:relative;z-index:1;
+}
+.url-field{
+  display:flex;align-items:center;
+  background:var(--white);
+  border:1.5px solid var(--border2);
+  border-radius:14px;
+  padding:6px 6px 6px 18px;
+  box-shadow:0 4px 24px rgba(10,15,46,.07),0 1px 4px rgba(10,15,46,.04);
+  transition:border-color .2s,box-shadow .2s;
+}
+.url-field:focus-within{
+  border-color:var(--blue);
+  box-shadow:0 4px 24px rgba(26,107,255,.12),0 0 0 3px rgba(26,107,255,.08);
+}
+.url-icon{font-size:16px;margin-right:8px;flex-shrink:0;opacity:.4;}
+.url-input{
+  flex:1;border:none;background:none;
+  font-family:'DM Sans',sans-serif;font-size:15px;color:var(--ink);
+  outline:none;padding:8px 0;
+}
+.url-input::placeholder{color:var(--ink3);}
+.url-submit{
+  padding:11px 22px;background:var(--blue);color:#fff;border:none;
+  border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;
+  cursor:pointer;transition:all .15s;white-space:nowrap;
+  display:flex;align-items:center;gap:7px;flex-shrink:0;
+}
+.url-submit:hover{background:#1558DD;transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,107,255,.3);}
+.url-submit svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;}
+
+.url-hint{font-size:12px;color:var(--ink3);margin-top:12px;opacity:.7;}
+
+/* PILLS */
+.intro-pills{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:36px;position:relative;z-index:1;}
+.pill{
+  font-size:12px;font-weight:500;color:var(--ink2);
+  background:var(--bg);border:1px solid var(--border2);
+  border-radius:20px;padding:5px 14px;
+  display:flex;align-items:center;gap:5px;
+}
+
+/* SOCIAL PROOF */
+.social-proof{margin-top:48px;font-size:12px;color:var(--ink3);position:relative;z-index:1;}
+.sp-avatars{display:flex;justify-content:center;margin-bottom:8px;}
+.sp-av{
+  width:32px;height:32px;border-radius:50%;border:2px solid var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-size:14px;margin-left:-8px;first:margin-left:0;
+  background:linear-gradient(135deg,var(--blue-l),var(--blue-m));
+}
+.sp-av:first-child{margin-left:0;}
+
+/* ── LOADING ── */
+#s-loading{
+  min-height:calc(100vh - 57px);display:none;
+  flex-direction:column;align-items:center;justify-content:center;
+  gap:20px;padding:40px;text-align:center;background:var(--white);
+}
+#s-loading.active{display:flex;}
+.load-orbit{position:relative;width:64px;height:64px;margin:0 auto;}
+.load-orbit-inner{position:absolute;inset:0;border:3px solid var(--border);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.load-site{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.load-title{font-family:'Syne',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.3px;color:var(--ink);}
+.load-url{font-size:13px;color:var(--blue);font-weight:500;margin-top:2px;}
+.load-steps{margin-top:12px;display:flex;flex-direction:column;gap:7px;align-items:flex-start;max-width:360px;width:100%;}
+.ls{font-size:13px;color:var(--ink3);display:flex;align-items:center;gap:9px;opacity:.35;transition:all .4s;}
+.ls.done{opacity:1;color:var(--ink2);}
+.ls.active-step{opacity:1;color:var(--blue);}
+.ls-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0;}
+
+/* ── RESULT ── */
+#s-result{max-width:820px;margin:0 auto;padding:48px 24px 80px;}
+
+.res-url{font-size:12px;color:var(--ink3);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+.res-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(24px,3.5vw,34px);letter-spacing:-1px;margin-bottom:32px;}
+.res-title em{font-style:normal;color:var(--blue);}
+
+.score-block{
+  background:var(--ink);border-radius:20px;padding:36px;
+  display:grid;grid-template-columns:130px 1fr;gap:32px;align-items:center;
+  margin-bottom:18px;position:relative;overflow:hidden;
+}
+.score-block::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(26,107,255,.12) 0%,transparent 70%);top:-150px;right:-100px;pointer-events:none;}
+.score-circle{width:120px;height:120px;border-radius:50%;position:relative;flex-shrink:0;}
+.score-ring{position:absolute;inset:0;}
+.score-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-num{font-family:'Syne',sans-serif;font-weight:800;font-size:40px;line-height:1;letter-spacing:-2px;color:#fff;}
+.score-max{font-size:11px;color:rgba(255,255,255,.3);}
+.score-verdict{font-family:'Syne',sans-serif;font-weight:700;font-size:21px;letter-spacing:-.3px;color:#fff;margin-bottom:8px;}
+.score-sub{font-size:14px;color:rgba(255,255,255,.5);line-height:1.6;max-width:380px;}
+
+.axes{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+.axe{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+.axe-label{font-size:11px;font-weight:600;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3);margin-bottom:8px;}
+.axe-val{font-family:'Syne',sans-serif;font-weight:800;font-size:24px;letter-spacing:-.5px;color:var(--ink);}
+.axe-bar{height:4px;background:var(--border);border-radius:2px;margin-top:8px;overflow:hidden;}
+.axe-fill{height:100%;border-radius:2px;background:var(--blue);transition:width 1s cubic-bezier(.16,1,.3,1);}
+
+.rapport-card{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:18px;}
+.rapport-head{padding:14px 22px;border-bottom:1px solid var(--border);background:var(--bg);display:flex;align-items:center;justify-content:space-between;}
+.rapport-head-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
+.rapport-body{padding:24px 22px;}
+.gen{font-size:14px;color:var(--ink2);line-height:1.85;}
+.gen h2{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--blue);margin:20px 0 8px;letter-spacing:-.1px;}
+.gen h2:first-child{margin-top:0;}
+.gen h3{font-size:14px;font-weight:600;color:var(--ink);margin:14px 0 5px;}
+.gen ul{padding-left:18px;margin:4px 0 10px;}
+.gen li{margin-bottom:5px;}
+.gen strong{color:var(--ink);font-weight:600;}
+.gen p{margin-bottom:8px;}
+
+.cta-block{
+  background:linear-gradient(135deg,var(--blue) 0%,#0A4EDD 100%);
+  border-radius:16px;padding:32px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.cta-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.3px;color:#fff;margin-bottom:6px;}
+.cta-sub{font-size:14px;color:rgba(255,255,255,.65);line-height:1.5;}
+.btn-cta{padding:13px 26px;background:#fff;color:var(--blue);border:none;border-radius:9px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;cursor:pointer;white-space:nowrap;text-decoration:none;display:inline-block;flex-shrink:0;transition:transform .15s,box-shadow .15s;}
+.btn-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,.15);}
+
+.retry-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--border2);border-radius:7px;background:none;font-size:12px;color:var(--ink3);cursor:pointer;margin-bottom:24px;transition:all .15s;}
+.retry-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+.copy-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 12px;border-radius:6px;font-size:11px;font-weight:500;background:var(--bg);border:1px solid var(--border2);color:var(--ink3);cursor:pointer;transition:all .15s;}
+.copy-btn:hover{border-color:var(--blue);color:var(--blue);}
+
+.error-box{background:#FEF0EF;border:1px solid rgba(217,48,37,.2);border-radius:12px;padding:20px 22px;margin-bottom:20px;}
+.error-title{font-weight:600;color:#D93025;margin-bottom:4px;}
+.error-sub{font-size:13px;color:#8A2D25;line-height:1.5;}
+
+@media(max-width:700px){
+  header{padding:14px 20px;}
+  .intro-h1{letter-spacing:-1.5px;}
+  #s-result{padding:28px 16px 60px;}
+  .score-block{grid-template-columns:1fr;text-align:center;}
+  .score-circle{margin:0 auto;}
+  .axes{grid-template-columns:1fr;}
+  .cta-block{flex-direction:column;}
+  .url-submit span{display:none;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Ambass<em>ia</em></div>
+  <div class="hbadge">Audit Gen Z gratuit</div>
+</header>
+
+<!-- ══ INTRO ══ -->
+<div id="s-intro" class="screen active">
+  <!-- blobs déco -->
+  <div class="blob1"></div>
+  <div class="blob2"></div>
+  <div class="blob3"></div>
+  <!-- éléments flottants -->
+  <div class="deco deco-plus" style="top:12%;left:8%">+</div>
+  <div class="deco deco-plus" style="top:22%;right:12%;font-size:16px;color:#FF5C35">+</div>
+  <div class="deco deco-plus" style="bottom:20%;left:15%;color:#00C97A">+</div>
+  <div class="deco deco-ring" style="top:15%;right:8%;border-color:#1A6BFF;width:48px;height:48px;"></div>
+  <div class="deco deco-ring" style="bottom:25%;right:15%;border-color:#FF5C35;width:32px;height:32px;"></div>
+  <div class="deco deco-sq" style="top:35%;left:6%;background:#1A6BFF;border-radius:6px;"></div>
+  <div class="deco deco-sq" style="top:60%;right:7%;background:#FF5C35;border-radius:6px;width:14px;height:14px;"></div>
+
+  <div class="intro-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Outil gratuit · Rapport en 30 secondes
+  </div>
+
+  <h1 class="intro-h1">
+    Votre marque<br>
+    parle-t-elle<br>
+    <span class="word-blue">vraiment</span> à la <span class="word-orange">Gen Z</span> ?
+  </h1>
+
+  <p class="intro-sub">
+    Collez l'URL de votre site.<br>
+    Claude l'analyse et génère votre audit complet instantanément.
+  </p>
+
+  <div class="url-bar">
+    <div class="url-field">
+      <span class="url-icon">🌐</span>
+      <input class="url-input" type="text" id="url-input"
+        placeholder="monsite.fr ou https://monsite.fr"
+        oninput="cleanUrl(this)"
+        onkeydown="if(event.key==='Enter')startAudit()">
+      <button class="url-submit" onclick="startAudit()">
+        <svg viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <span>Analyser</span>
+      </button>
+    </div>
+    <div class="url-hint">Exemples : lydia.com · doctolib.fr · backmarket.fr</div>
+  </div>
+
+  <div class="intro-pills">
+    <div class="pill">📱 Présence digitale Gen Z</div>
+    <div class="pill">🎓 Stratégie campus</div>
+    <div class="pill">🧠 Positionnement 18-25 ans</div>
+    <div class="pill">⚡ Score /100</div>
+  </div>
+
+  <div class="social-proof">
+    <div class="sp-avatars">
+      <div class="sp-av">🧑</div>
+      <div class="sp-av">👩</div>
+      <div class="sp-av">🧑‍💼</div>
+      <div class="sp-av">👨‍💻</div>
+    </div>
+    Déjà utilisé par des équipes marketing de startups françaises
+  </div>
+</div>
+
+<!-- ══ LOADING ══ -->
+<div id="s-loading" class="screen">
+  <div class="load-orbit">
+    <div class="load-orbit-inner"></div>
+    <div class="load-site">🔍</div>
+  </div>
+  <div class="load-title">Analyse en cours</div>
+  <div class="load-url" id="load-url-display"></div>
+  <div class="load-steps">
+    <div class="ls" id="ls1"><div class="ls-dot"></div>Lecture du site</div>
+    <div class="ls" id="ls2"><div class="ls-dot"></div>Analyse du positionnement Gen Z</div>
+    <div class="ls" id="ls3"><div class="ls-dot"></div>Évaluation présence digitale</div>
+    <div class="ls" id="ls4"><div class="ls-dot"></div>Génération du rapport</div>
+  </div>
+</div>
+
+<!-- ══ RESULT ══ -->
+<div id="s-result" class="screen">
+  <button class="retry-btn" onclick="restart()">← Analyser un autre site</button>
+
+  <div class="res-url" id="r-url"></div>
+  <div class="res-title" id="r-title"></div>
+
+  <div id="error-zone"></div>
+
+  <div class="score-block" id="score-block">
+    <div class="score-circle">
+      <svg class="score-ring" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="54" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        <circle id="score-arc" cx="60" cy="60" r="54" fill="none" stroke="#1A6BFF" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="339.3" stroke-dashoffset="339.3"
+          transform="rotate(-90 60 60)" style="transition:stroke-dashoffset 1.2s cubic-bezier(.16,1,.3,1)"/>
+      </svg>
+      <div class="score-inner">
+        <div class="score-num" id="r-score">0</div>
+        <div class="score-max">/100</div>
+      </div>
+    </div>
+    <div>
+      <div class="score-verdict" id="r-verdict"></div>
+      <div class="score-sub" id="r-verdict-sub"></div>
+    </div>
+  </div>
+
+  <div class="axes">
+    <div class="axe"><div class="axe-label">📱 Présence digitale</div><div class="axe-val" id="ax1">—</div><div class="axe-bar"><div class="axe-fill" id="axb1" style="width:0"></div></div></div>
+    <div class="axe"><div class="axe-label">🎓 Stratégie campus</div><div class="axe-val" id="ax2">—</div><div class="axe-bar"><div class="axe-fill" id="axb2" style="width:0"></div></div></div>
+    <div class="axe"><div class="axe-label">🧠 Positionnement</div><div class="axe-val" id="ax3">—</div><div class="axe-bar"><div class="axe-fill" id="axb3" style="width:0"></div></div></div>
+  </div>
+
+  <div class="rapport-card">
+    <div class="rapport-head">
+      <div class="rapport-head-title">Rapport complet & recommandations</div>
+      <button class="copy-btn" id="copy-btn" onclick="copyRapport()">📋 Copier</button>
+    </div>
+    <div class="rapport-body"><div class="gen" id="r-rapport"></div></div>
+  </div>
+
+  <div class="cta-block">
+    <div class="cta-left">
+      <div class="cta-title">Passez à l'action avec Ambassia</div>
+      <div class="cta-sub">On déploie vos premiers ambassadeurs sur les campus en moins de 2 semaines.</div>
+    </div>
+    <a class="btn-cta" href="https://calendly.com/james-porato-ambassia/30min" target="_blank">Appel gratuit →</a>
+  </div>
+</div>
+
+<script>
+let rapportRaw = '';
+let siteUrl = '';
+
+function cleanUrl(input) {
+  let v = input.value.trim();
+  v = v.replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  input.value = v;
+}
+
+function normalizeUrl(raw) {
+  let u = raw.trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '');
+  return 'https://' + u;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+function restart() {
+  showScreen('s-intro');
+}
+
+async function startAudit() {
+  const raw = document.getElementById('url-input').value.trim();
+  if (!raw) { document.getElementById('url-input').focus(); return; }
+
+  siteUrl = normalizeUrl(raw);
+  document.getElementById('load-url-display').textContent = siteUrl;
+  showScreen('s-loading');
+
+  // Animate steps
+  const steps = ['ls1','ls2','ls3','ls4'];
+  const delays = [400, 1200, 2200, 3400];
+  delays.forEach((d, i) => {
+    setTimeout(() => {
+      steps.forEach(s => document.getElementById(s).classList.remove('active-step'));
+      document.getElementById(steps[i]).classList.add('active-step');
+      if (i > 0) document.getElementById(steps[i-1]).classList.add('done');
+    }, d);
+  });
+
+  const system = `Tu es un expert en marketing Gen Z, stratégie digitale et acquisition campus. Tu analyses le site web d'une marque et produis un audit structuré de sa maturité face à la génération Z en France.
+
+Tu dois retourner UNIQUEMENT un objet JSON valide, sans aucun texte avant ou après, sans backticks, sans markdown autour du JSON. Le JSON doit avoir exactement cette structure :
+{
+  "marque": "Nom détecté de la marque",
+  "score_global": 42,
+  "score_digital": 55,
+  "score_campus": 20,
+  "score_positionnement": 60,
+  "verdict": "Titre court du verdict (5 mots max)",
+  "verdict_sub": "Une phrase qui résume la situation de la marque face à la Gen Z.",
+  "rapport": "Le rapport complet en markdown avec des ## pour les titres et des listes à puces."
+}
+
+Les scores sont des entiers de 0 à 100. Le rapport doit contenir ces sections en markdown :
+## Ce que vous faites bien
+## Vos angles morts face à la Gen Z
+## 3 actions prioritaires dans les 90 prochains jours
+## Opportunité campus : pourquoi maintenant
+## Conclusion
+
+Le rapport doit être direct, concret, personnalisé. Maximum 450 mots. Pas de blabla.`;
+
+  const user = `Analyse le site suivant et génère un audit Gen Z complet : ${siteUrl}
+
+Visite le site, analyse son contenu, son ton, ses offres, sa présence sur les réseaux sociaux mentionnés, ses éventuelles actions campus ou ambassadeurs, et son positionnement vis-à-vis des 18-25 ans.
+
+Évalue sur 3 axes :
+- Présence digitale Gen Z (TikTok, Instagram, contenu court, ton, codes visuels)
+- Stratégie campus & ambassadeurs (actions terrain, partenariats étudiants, offres étudiantes)
+- Positionnement & pertinence (l'offre est-elle pensée pour les 18-25 ans, le messaging leur parle-t-il ?)
+
+Données de contexte : 12 millions de consommateurs Gen Z en France, 72% utilisent un adblocker, aucune startup française du Top 40 French Tech n'a de programme campus documenté, Red Bull et Spotify ont construit leur domination Gen Z via les campus.
+
+Retourne uniquement le JSON demandé.`;
+
+  try {
+    const res = await fetch('/.netlify/functions/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1500,
+        system: system,
+        messages: [{ role: 'user', content: user }],
+        tools: [{
+          type: 'web_search_20250305',
+          name: 'web_search'
+        }]
+      })
+    });
+
+    const data = await res.json();
+
+    // Extraire le texte de la réponse
+    let text = '';
+    if (data.content) {
+      for (const block of data.content) {
+        if (block.type === 'text') text += block.text;
+      }
+    }
+
+    // Parser le JSON
+    text = text.trim();
+    // Nettoyer les backticks éventuels
+    text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+
+    let parsed;
+    try {
+      parsed = JSON.parse(text);
+    } catch(e) {
+      // Essayer d'extraire le JSON avec regex
+      const match = text.match(/\{[\s\S]+\}/);
+      if (match) parsed = JSON.parse(match[0]);
+      else throw new Error('Format de réponse invalide.');
+    }
+
+    // Marquer dernière étape
+    document.getElementById('ls4').classList.add('done');
+    document.getElementById('ls4').classList.remove('active-step');
+
+    await new Promise(r => setTimeout(r, 500));
+    showResult(parsed);
+
+  } catch(e) {
+    document.getElementById('ls4').classList.add('done');
+    await new Promise(r => setTimeout(r, 300));
+    showError(e.message);
+  }
+}
+
+function showResult(d) {
+  showScreen('s-result');
+
+  // URL + titre
+  document.getElementById('r-url').innerHTML = '🌐 ' + siteUrl;
+  document.getElementById('r-title').innerHTML = 'Audit Gen Z — <em>' + (d.marque || siteUrl) + '</em>';
+
+  // Score animé
+  const target = Math.min(100, Math.max(0, parseInt(d.score_global) || 0));
+  let current = 0;
+  const iv = setInterval(() => {
+    current = Math.min(current + 2, target);
+    document.getElementById('r-score').textContent = current;
+    if (current >= target) clearInterval(iv);
+  }, 18);
+
+  // Arc
+  const circ = 339.3;
+  const offset = circ - (target / 100) * circ;
+  const color = target >= 75 ? '#2ECC8A' : target >= 50 ? '#F5A623' : target >= 25 ? '#1A6BFF' : '#FF4B4B';
+  setTimeout(() => {
+    const arc = document.getElementById('score-arc');
+    arc.style.strokeDashoffset = offset;
+    arc.style.stroke = color;
+  }, 100);
+
+  // Verdict
+  document.getElementById('r-verdict').textContent = d.verdict || '';
+  document.getElementById('r-verdict-sub').textContent = d.verdict_sub || '';
+
+  // Axes
+  const a1 = Math.min(100, Math.max(0, parseInt(d.score_digital) || 0));
+  const a2 = Math.min(100, Math.max(0, parseInt(d.score_campus) || 0));
+  const a3 = Math.min(100, Math.max(0, parseInt(d.score_positionnement) || 0));
+  document.getElementById('ax1').textContent = a1 + '/100';
+  document.getElementById('ax2').textContent = a2 + '/100';
+  document.getElementById('ax3').textContent = a3 + '/100';
+  setTimeout(() => {
+    document.getElementById('axb1').style.width = a1 + '%';
+    document.getElementById('axb2').style.width = a2 + '%';
+    document.getElementById('axb3').style.width = a3 + '%';
+  }, 200);
+
+  // Rapport
+  rapportRaw = d.rapport || '';
+  document.getElementById('r-rapport').innerHTML = mdToHtml(rapportRaw);
+  document.getElementById('copy-btn').dataset.raw = rapportRaw;
+}
+
+function showError(msg) {
+  showScreen('s-result');
+  document.getElementById('r-url').innerHTML = '🌐 ' + siteUrl;
+  document.getElementById('r-title').textContent = 'Une erreur est survenue';
+  document.getElementById('error-zone').innerHTML =
+    '<div class="error-box"><div class="error-title">Impossible d\'analyser ce site</div><div class="error-sub">' + msg + '<br><br>Vérifiez que l\'URL est correcte et réessayez.</div></div>';
+  document.getElementById('score-block').style.display = 'none';
+  document.querySelectorAll('.axes,.rapport-card').forEach(el => el.style.display = 'none');
+}
+
+function mdToHtml(text) {
+  if (!text) return '';
+  return text
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/^[-•*] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[^]*?<\/li>\n?)+/g, s => '<ul>' + s + '</ul>')
+    .replace(/\n{2,}/g,'</p><p>')
+    .replace(/^(?!<[hup]|<li)(.+)/gm,'<p>$1</p>')
+    .replace(/<p><\/p>/g,'');
+}
+
+function copyRapport() {
+  const btn = document.getElementById('copy-btn');
+  navigator.clipboard.writeText(btn.dataset.raw || '').then(() => {
+    btn.textContent = '✓ Copié !';
+    setTimeout(() => { btn.textContent = '📋 Copier'; }, 2000);
+  });
+}
+</script>
+</body>
+</html>
