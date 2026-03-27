@@ -390,6 +390,15 @@ header{
 let rapportRaw = '';
 let siteUrl = '';
 
+document.addEventListener('DOMContentLoaded', function() {
+  var inp = document.getElementById('url-input');
+  if (inp) {
+    inp.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') startAudit();
+    });
+  }
+});
+
 function cleanUrl(input) {
   // pas de nettoyage automatique - on laisse l'utilisateur taper librement
 }
