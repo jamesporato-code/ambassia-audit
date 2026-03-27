@@ -111,12 +111,21 @@ header{background:var(--white);border-bottom:1px solid var(--border);padding:16p
 .rapport-head-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;}
 .rapport-body{padding:24px 22px;}
 .gen{font-size:14px;color:var(--ink2);line-height:1.85;}
-.gen h2{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--blue);margin:20px 0 8px;}
-.gen h2:first-child{margin-top:0;}
-.gen ul{padding-left:18px;margin:4px 0 10px;}
-.gen li{margin-bottom:5px;}
-.gen strong{color:var(--ink);font-weight:600;}
-.gen p{margin-bottom:8px;}
+.rap-section{margin-bottom:20px;}
+.rap-section:last-child{margin-bottom:0;}
+.rap-section-title{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;letter-spacing:.03em;margin-bottom:10px;display:flex;align-items:center;gap:7px;}
+.rap-green{color:#0A9E6A;}
+.rap-orange{color:#D4890A;}
+.rap-blue{color:var(--blue);}
+.rap-icon{font-size:14px;}
+.rap-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-radius:8px;margin-bottom:6px;font-size:13px;font-weight:500;}
+.rap-item-green{background:#E6F7F1;color:#0A5C3E;}
+.rap-item-orange{background:#FEF5E0;color:#7A4E08;}
+.rap-item-blue{background:var(--blue-l);color:var(--blue);}
+.rap-check{flex-shrink:0;font-weight:700;margin-top:1px;}
+.rap-num{flex-shrink:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;margin-top:1px;}
+.rap-text{font-size:13px;color:var(--ink2);line-height:1.7;padding:10px 14px;background:var(--bg);border-radius:8px;}
+.rap-conclusion{margin-top:16px;padding:14px 18px;border-left:3px solid var(--blue);background:var(--blue-l);border-radius:0 8px 8px 0;font-size:14px;font-weight:500;color:var(--ink);line-height:1.6;}
 
 .cta-card{background:linear-gradient(135deg,var(--blue) 0%,#0A4EDD 100%);border-radius:16px;padding:32px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
 .cta-title{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;letter-spacing:-.3px;color:#fff;margin-bottom:6px;}
@@ -294,7 +303,8 @@ function runAudit() {
   setTimeout(function() { setStep(3); }, 2400);
   setTimeout(function() { setStep(4); }, 3600);
 
-  var system = 'Tu es un expert en marketing Gen Z, stratégie digitale et acquisition campus. Tu analyses une marque et produis un audit JSON structuré. Retourne UNIQUEMENT un objet JSON valide, sans texte avant ou après, sans backticks. Structure exacte : {"marque":"Nom","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Titre court","verdict_sub":"Une phrase résumé.","rapport":"Rapport markdown avec ## titres"}. Sections du rapport : ## Ce que vous faites bien / ## Vos angles morts face à la Gen Z / ## 3 actions prioritaires dans les 90 prochains jours / ## Opportunité campus : pourquoi maintenant / ## Conclusion. Sois direct, concis, max 400 mots.';
+  var system = 'Tu es un expert en marketing Gen Z. Tu analyses une marque et retournes UNIQUEMENT un objet JSON valide, sans texte avant ou après, sans backticks. Structure exacte : {"marque":"Nom","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Titre court 4 mots","verdict_sub":"Une phrase résumé courte.","points_forts":["Point court 1","Point court 2","Point court 3"],"angles_morts":["Angle mort 1","Angle mort 2","Angle mort 3"],"actions":["Action concrète 1","Action concrète 2","Action concrète 3"],"opportunite":"2 phrases max sur opportunité campus.","conclusion":"1 phrase de conclusion impactante."}. Chaque item des listes = max 12 mots, formulé comme un constat factuel. Pas de blabla.';"
+
 
   var user = 'Génère un audit Gen Z pour la marque dont le site est : ' + siteUrl + '\n\nUtilise tes connaissances sur cette marque. Évalue sur 3 axes (0-100) :\n1. Présence digitale Gen Z (TikTok, Instagram, ton, codes visuels)\n2. Stratégie campus et ambassadeurs (actions terrain, offres étudiantes)\n3. Positionnement (offre et messaging adaptés aux 18-25 ans)\n\nContexte FR : 12M consommateurs Gen Z, 72% adblocker, aucun Top 40 French Tech avec programme campus documenté.\n\nRetourne uniquement le JSON.';
 
@@ -371,8 +381,8 @@ function showResult(d) {
     document.getElementById('axb3').style.width = a3 + '%';
   }, 200);
 
-  rapportRaw = d.rapport || '';
-  document.getElementById('r-rapport').innerHTML = mdToHtml(rapportRaw);
+  rapportRaw = JSON.stringify(d, null, 2);
+  document.getElementById('r-rapport').innerHTML = renderRapport(d);
 }
 
 function showError(msg) {
@@ -385,19 +395,60 @@ function showError(msg) {
   document.querySelector('.rapport-card').style.display = 'none';
 }
 
-function mdToHtml(text) {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
-    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
-    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
-    .replace(/^[-*] (.+)$/gm, '<li>$1</li>')
-    .replace(/(<li>[\s\S]*?<\/li>\n?)+/g, function(m) { return '<ul>' + m + '</ul>'; })
-    .replace(/\n{2,}/g, '</p><p>')
-    .replace(/^(?!<[hup]|<li)(.+)$/gm, '<p>$1</p>')
-    .replace(/<p><\/p>/g, '');
+function renderRapport(d) {
+  var html = '';
+
+  // Points forts
+  html += '<div class="rap-section">';
+  html += '<div class="rap-section-title rap-green"><span class="rap-icon">✓</span> Ce que vous faites bien</div>';
+  if (d.points_forts && d.points_forts.length) {
+    for (var i = 0; i < d.points_forts.length; i++) {
+      html += '<div class="rap-item rap-item-green"><span class="rap-check">✓</span>' + esc(d.points_forts[i]) + '</div>';
+    }
+  }
+  html += '</div>';
+
+  // Angles morts
+  html += '<div class="rap-section">';
+  html += '<div class="rap-section-title rap-orange"><span class="rap-icon">⚠</span> Vos angles morts face à la Gen Z</div>';
+  if (d.angles_morts && d.angles_morts.length) {
+    for (var i = 0; i < d.angles_morts.length; i++) {
+      html += '<div class="rap-item rap-item-orange"><span class="rap-check">⚠</span>' + esc(d.angles_morts[i]) + '</div>';
+    }
+  }
+  html += '</div>';
+
+  // Actions
+  html += '<div class="rap-section">';
+  html += '<div class="rap-section-title rap-blue"><span class="rap-icon">→</span> 3 actions dans les 90 prochains jours</div>';
+  if (d.actions && d.actions.length) {
+    for (var i = 0; i < d.actions.length; i++) {
+      html += '<div class="rap-item rap-item-blue"><span class="rap-num">' + (i+1) + '</span>' + esc(d.actions[i]) + '</div>';
+    }
+  }
+  html += '</div>';
+
+  // Opportunité campus
+  if (d.opportunite) {
+    html += '<div class="rap-section">';
+    html += '<div class="rap-section-title rap-blue"><span class="rap-icon">🎓</span> Opportunité campus</div>';
+    html += '<div class="rap-text">' + esc(d.opportunite) + '</div>';
+    html += '</div>';
+  }
+
+  // Conclusion
+  if (d.conclusion) {
+    html += '<div class="rap-conclusion">' + esc(d.conclusion) + '</div>';
+  }
+
+  return html;
 }
+
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function mdToHtml(text) { return text || ''; }
 
 // Event listeners — attachés après chargement du DOM
 document.getElementById('btn-analyser').addEventListener('click', startAudit);
