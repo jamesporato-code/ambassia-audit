@@ -470,51 +470,92 @@ Données de contexte : 12 millions de consommateurs Gen Z en France, 72% utilise
 Retourne uniquement le JSON demandé.`;
 
   try {
-    const res = await fetch('/.netlify/functions/claude', {
+    // Étape 1 : appel avec web_search pour que Claude visite et analyse le site
+    const res1 = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1500,
+        max_tokens: 2000,
         system: system,
         messages: [{ role: 'user', content: user }],
-        tools: [{
-          type: 'web_search_20250305',
-          name: 'web_search'
-        }]
+        tools: [{ type: 'web_search_20250305', name: 'web_search' }]
       })
     });
+    const data1 = await res1.json();
+    if (data1.error) throw new Error(data1.error.message);
 
-    const data = await res.json();
-
-    // Extraire le texte de la réponse
-    let text = '';
-    if (data.content) {
-      for (const block of data.content) {
-        if (block.type === 'text') text += block.text;
+    // Reconstituer la conversation complète avec les tool_results
+    const assistantMsg = { role: 'assistant', content: data1.content };
+    
+    // Construire les tool_results pour chaque tool_use
+    const toolResults = [];
+    for (const block of data1.content) {
+      if (block.type === 'tool_use') {
+        toolResults.push({
+          type: 'tool_result',
+          tool_use_id: block.id,
+          content: 'Recherche effectuée.'
+        });
       }
     }
 
-    // Parser le JSON
-    text = text.trim();
-    // Nettoyer les backticks éventuels
-    text = text.replace(/^```json\s*/i, '').replace(/^```\s*/i, '').replace(/\s*```$/i, '');
+    // Étape 2 : si Claude a utilisé des tools, relancer pour obtenir le JSON final
+    let finalText = '';
+    
+    if (data1.stop_reason === 'tool_use' && toolResults.length > 0) {
+      const messages2 = [
+        { role: 'user', content: user },
+        assistantMsg,
+        { role: 'user', content: toolResults }
+      ];
+      
+      const res2 = await fetch('/.netlify/functions/claude', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 2000,
+          system: system,
+          messages: messages2,
+          tools: [{ type: 'web_search_20250305', name: 'web_search' }]
+        })
+      });
+      const data2 = await res2.json();
+      if (data2.error) throw new Error(data2.error.message);
+      
+      for (const block of data2.content) {
+        if (block.type === 'text') finalText += block.text;
+      }
+    } else {
+      // Claude a répondu directement sans tool_use
+      for (const block of data1.content) {
+        if (block.type === 'text') finalText += block.text;
+      }
+    }
+
+    // Parser le JSON dans la réponse finale
+    finalText = finalText.trim()
+      .replace(/^```json\s*/i, '')
+      .replace(/^```\s*/i, '')
+      .replace(/\s*```$/i, '');
 
     let parsed;
     try {
-      parsed = JSON.parse(text);
+      parsed = JSON.parse(finalText);
     } catch(e) {
-      // Essayer d'extraire le JSON avec regex
-      const match = text.match(/\{[\s\S]+\}/);
-      if (match) parsed = JSON.parse(match[0]);
-      else throw new Error('Format de réponse invalide.');
+      const match = finalText.match(/\{[\s\S]+\}/);
+      if (match) {
+        try { parsed = JSON.parse(match[0]); }
+        catch(e2) { throw new Error('Format de réponse invalide. Réessayez.'); }
+      } else {
+        throw new Error('Format de réponse invalide. Réessayez.');
+      }
     }
 
-    // Marquer dernière étape
     document.getElementById('ls4').classList.add('done');
     document.getElementById('ls4').classList.remove('active-step');
-
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise(r => setTimeout(r, 400));
     showResult(parsed);
 
   } catch(e) {
