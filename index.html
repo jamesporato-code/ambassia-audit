@@ -541,10 +541,38 @@ function startAudit() {
 }
 
 function callAPI() {
-  var sys = 'Tu es un analyste strategique senior specialise en marketing Gen Z et strategie campus pour les marques en France. Tu produis des audits ultra-precis, factuals et actionables. Retourne UNIQUEMENT un objet JSON valide, sans backticks. Format : {"marque":"Nom exact","secteur":"secteur precis","score_global":42,"score_digital":55,"score_campus":20,"score_positionnement":60,"verdict":"Verdict incisif 4-5 mots","verdict_sub":"Une phrase qui decrit precisement la situation de cette marque face a la Gen Z avec un element factuel.","points_forts":["Point fort 1 avec exemple concret et chiffre si possible (max 18 mots)","Point fort 2 specifique avec detail produit ou canal","Point fort 3 specifique"],"angles_morts":["Angle mort critique avec impact business chiffre ou compare a un concurrent (max 18 mots)","Angle mort 2 avec consequence concrete","Angle mort 3 specifique"],"benchmark":"2 phrases : cite 2-3 concurrents directs et ce qu ils font specifiquement en Gen Z et campus. Sois factuel et precis.","actions":["Action 1 tres concrete : canal specifique + cible precise + objectif mesurable (max 20 mots)","Action 2 tres concrete avec KPI attendu","Action 3 : levier ambassadeurs campus Ambassia avec detail operationnel"],"opportunite":"3 phrases detaillees : marche addressable en chiffres, gap concurrentiel identifie, comment Ambassia peut activer ce canal en moins de 4 semaines.","conclusion":"1 phrase puissante et specifique qui resume le diagnostic et cree un sentiment d urgence.","insight_cle":"1 insight strategique inattendu et specifique sur cette marque que la plupart des gens ne voient pas (max 20 mots)."}. Scores de 0 a 100. Sois SPECIFIQUE, FACTUEL, INCISIF.';"
+  var sys = [
+  'Tu es un analyste strategique senior specialise en marketing Gen Z.',
+  'Retourne UNIQUEMENT un objet JSON valide, sans backticks ni texte autour.',
+  'Format : ' + JSON.stringify({
+    marque: 'Nom exact', secteur: 'secteur precis',
+    score_global: 42, score_digital: 55, score_campus: 20, score_positionnement: 60,
+    verdict: 'Verdict incisif 4-5 mots',
+    verdict_sub: 'Une phrase concrete sur la situation reelle face a la Gen Z.',
+    points_forts: ['Point fort 1 avec exemple concret et chiffre', 'Point fort 2', 'Point fort 3'],
+    angles_morts: ['Angle mort avec impact business ou concurrent', 'Angle mort 2', 'Angle mort 3'],
+    benchmark: '2 phrases sur les concurrents directs et leur strategie Gen Z campus.',
+    actions: ['Action 1 tres concrete avec canal cible KPI', 'Action 2 concrete', 'Action 3 avec ambassadeurs campus Ambassia'],
+    opportunite: '3 phrases marche addressable gap concurrentiel et role Ambassia.',
+    conclusion: '1 phrase puissante specifique qui cree urgence.',
+    insight_cle: '1 insight strategique inattendu sur cette marque max 20 mots.'
+  }) + ' Scores 0 a 100. Max 18 mots par item. Sois SPECIFIQUE FACTUEL INCISIF.'
+].join(' ');
 
 
-  var usr = 'Analyse approfondie de la marque dont le site est : ' + siteUrl + '\n\nContexte de reference :\n- 12M consommateurs Gen Z en France (18-25 ans)\n- 72% utilisent un adblocker -> le digital pur ne suffit plus\n- 3M etudiants dans l enseignement superieur francais\n- ZERO startup du Top 40 French Tech avec programme campus ambassadeurs documente\n- Red Bull, Spotify, Adidas ont construit leur domination Gen Z via les campus (ambassadeurs terrain)\n- Ambassia est une agence qui deploie des etudiants-ambassadeurs sur les campus francais pour les marques\n\nPour ton analyse :\n1. Identifie les concurrents directs de cette marque et compare leur strategie Gen Z\n2. Sois SPECIFIQUE : cite des exemples reels de ce que fait ou ne fait pas cette marque\n3. Les recommandations doivent etre actionnables et adaptees au secteur\n4. Pour les angles morts lies au campus/terrain, mentionne naturellement qu une agence comme Ambassia peut combler ce gap\n\nRetourne uniquement le JSON avec le champ benchmark en plus.';
+  var usrArr = [
+  'Analyse approfondie de la marque dont le site est : ' + siteUrl,
+  'Contexte : 12M Gen Z France, 72% adblocker, 3M etudiants FR, zero startup Top 40 FrenchTech avec programme campus ambassadeurs documente.',
+  'Red Bull Spotify Adidas ont construit leur domination Gen Z via les campus.',
+  'Ambassia est une agence qui deploie des etudiants-ambassadeurs sur les campus francais.',
+  'Instructions : (1) Identifie les concurrents directs et compare leur strategie Gen Z.',
+  '(2) Sois SPECIFIQUE : cite des exemples reels de ce que fait ou ne fait pas cette marque.',
+  '(3) Recommandations actionnables et adaptees au secteur.',
+  '(4) Pour les angles morts campus, mentionne naturellement Ambassia comme solution.',
+  'Retourne uniquement le JSON.'
+];
+var usr = usrArr.join(' ');
+
 
   fetch('/.netlify/functions/claude', {
     method: 'POST',
