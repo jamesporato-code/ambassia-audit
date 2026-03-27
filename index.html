@@ -564,7 +564,7 @@ function callAPI() {
     for (var i = 0; i < data.content.length; i++) {
       if (data.content[i].type === 'text') text += data.content[i].text;
     }
-    text = text.trim().replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```\s*$/i,'');
+    text = text.trim().replace(/^\x60\x60\x60json\s*/i,'').replace(/^\x60\x60\x60\s*/i,'').replace(/\s*\x60\x60\x60\s*$/i,'');
     var parsed = null;
     try { parsed = JSON.parse(text); }
     catch(e1) {
